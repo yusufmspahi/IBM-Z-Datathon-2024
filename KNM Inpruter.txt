@@ -1,0 +1,32 @@
+import pandas as pd
+
+file_path = r'C:\Users\oh123\OneDrive - Imperial College London\Documents\Year 2\Datathon\final\final_dataset.csv'
+df = pd.read_csv(file_path)
+
+from sklearn.impute import KNNImputer
+
+
+
+
+knn_imputer = KNNImputer(n_neighbors=5, weights='uniform', metric='nan_euclidean')
+
+
+columns_to_impute = df.select_dtypes(include=['float64', 'int64']).columns
+
+
+df_imputed = df.copy()
+data_imputed = df_imputed[columns_to_impute] = knn_imputer.fit_transform(df[columns_to_impute])
+
+output_file_path = r'C:\Users\oh123\OneDrive - Imperial College London\Documents\Year 2\Datathon\final\Imputed_DataFrame.csv'  # Specify your desired save path
+df_imputed.to_csv(output_file_path, index=False)
+
+
+additional_data = df_imputed.sample(n=100, replace=True)  # Generate 100 additional data points
+df_augmented = pd.concat([df_imputed, additional_data], ignore_index=True)
+
+
+df_augmented[['Datetime', 'LinearSpeed']].head()
+
+
+output_file_path = r'C:\Users\oh123\OneDrive - Imperial College London\Documents\Year 2\Datathon\final\bootstrapped_augmented_dataset.csv'  # Specify your desired save path
+df_augmented.to_csv(output_file_path, index=False)
